@@ -1,32 +1,88 @@
 const express = require('express');
-const userRouter = require('./routers/userRouter');
+const Model = require('../models/userModel');
 
-const app = express();
+const router = express.Router();
 
-const port = 5000;
+router.post('/add', (req, res) => {
+    console.log(req.body);
 
-// middleware
-app.use('/user', userRouter);
-
-// route or endpoint
-app.get('/', (req, res) => {
-    res.send('response from express');
-});
-
-app.post('/add', (req, res) => {
-    res.send('response from add');
+    new Model(req.body).save()
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
 });
 
 // getall
-app.get('/getall', (req, res) => {
-    res.send('response from getall');
+router.get('/getall', (req, res) => {
+
+    Model.find()
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
+
+});
+
+// : denotes url parameter
+router.get('/getbycity/:city', (req, res) => {
+    console.log(req.params.city);
+    Model.find({ city: req.params.city })
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
+});
+
+router.get('/getbyemail/:email', (req, res) => {
+    console.log(req.params.email);
+    Model.findOne({ email: req.params.email })
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
+});
+
+// getbyid
+router.get('/getbyid/:id', (req, res) => {
+    Model.findById(req.params.id)
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
+});
+
+// update
+router.put('/update/:id', (req, res) => {
+
+    Model.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
 });
 
 // delete
-app.get('/delete', (req, res) => {
-    res.send('response from delete');
+router.delete('/delete/:id', (req, res) => {
+    Model.findByIdAndDelete(req.params.id)
+        .then((result) => {
+            res.status(200).json(result);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+        });
 });
 
-app.listen(port, () => {
-    console.log('server started');
-});
+module.exports = router;

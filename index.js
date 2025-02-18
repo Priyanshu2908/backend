@@ -1,26 +1,28 @@
 const express = require('express');
+const userRouter = require('./Routers/userRouter');
+const cors = require('cors');
 
 const app = express();
+
 const port = 5000;
 
+// middleware
+app.use(cors({ origin: ['http://localhost:3000'] }));
+app.use(express.json());
+app.use('/user', userRouter);
+
+// route or endpoint
 app.get('/', (req, res) => {
-    res.send('Hello World!');
-    });
+    res.send('response from express');
+});
 
-app.get('/about', (req, res) => {
-    res.send('About Us');
-    });
+app.get('/add', (req, res) => {
+    res.send('response from add');
+});
 
-    //getall
-app.get('/getall', (req, res) => {
-    res.send('Get All');
-    });
-
-    //delete
-app.get('/delete', (req, res) => {
-    res.send('Delete');
-    });
+// getall
+// delete
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    console.log('server started');
 });
